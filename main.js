@@ -11,7 +11,7 @@ import {
     deleteDoc,
     updateDoc,
     query,
-    orderBy
+    where
 } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js'
 
 // menambah konfigurasi
@@ -27,6 +27,37 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app)
 const tanamanCollection = collection(db, "tanaman")
+
+// fungsi untuk login
+export async function login() {
+const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+const q = query(
+  collection(db,"users")
+  where("username","==", username),
+  where("password","==",password)
+)
+  
+  const querySnapshot = await getDocs(collection(db, "users"));
+
+  let found = false
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+
+    if (data.username === username && data.password === password) {
+      found = true;
+    }
+  });
+
+  if (found) {
+    document.getElementById("status").innerText = "Login berhasil";
+    // redirect
+    window.location.href = "index.html";
+  } else {
+    document.getElementById("status").innerText = "Username atau password salah";
+}}
 
 //fungsi untum menampilkan daftar tanaman
 export async function daftartanaman() {
